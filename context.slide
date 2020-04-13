@@ -1,0 +1,90 @@
+Understanding Go's Context
+12 April 2020
+
+Ajitem Sahasrabuddhe
+Principal Software Engineer, Engineering.com
+me@ajitem.com
+@Greatdharmatma
+
+*  What is a Context?
+The dictionary defines context as: he circumstances that form the setting for an event, statement, or idea, and in terms of which it can be fully understood.
+
+Simply put, a context helps your code understand the circumstances under which it is executing. This will help the program make a decision on how to behave in that situation.
+
+: Speaker Notes: This are private notes for me
+
+* A Deeper Look
+
+The core of the _Context_ package is the Context interface.
+
+.code -numbers context.go
+
+* The Done function
+
+.code -numbers context.go /START DONE OMIT/,/END DONE OMIT/ HLDone
+The Done method returns a channel that acts as a cancelation signal to functions running on behalf of the Context. When the channel is closed, the functions should abandon their work and return.
+
+    func DoTask(ctx context.Context) {
+        ...
+        select {
+            case <- ctx.Done():
+                // cleanup and return
+            default:
+                ...
+        }
+        ...
+    }
+
+In functions accepting the context, we can wait on the Done channel to start cleanup and return.
+
+* The Error function
+
+.code -numbers context.go /START ERR OMIT/,/END ERR OMIT/ HLErr
+Whenever the Context is cancelled, the Err method returns an error indicating why the Context was canceled.
+
+    func DoTask(ctx context.Context) {
+        ...
+        select {
+            case <- ctx.Done():
+                err := ctx.Err() // will return the error with the reason of context cancelation
+                fmt.Println(err)
+                // cleanup and return
+            default:
+                ...
+        }
+        ...
+    }
+
+* The Deadline function
+
+.code -numbers context.go /START DEADLINE OMIT/,/END DEADLINE OMIT/ HLDeadline
+The Deadline function returns the time when the Context would be canceled.
+
+    deadline, ok := ctx.Deadline()
+
+The deadline can be used by the function to determine if it should start execution at all (in case very little time is left). We can also use this deadline to set timeouts for subsequent I/O operations.
+
+* The Value function
+
+.code -numbers context.go /START VALUE OMIT/,/END VALUE OMIT/ HLValue
+The Value function returns the scoped data that can be passed to all functions associated with the context.
+
+    ctx := context.WithValue(context.Background(), "key", "value")
+    
+    ...
+
+    // in a function
+
+    value := ctx.Value("key")
+
+    // use this value
+
+This allows us to safely pass scoped data like security credentials to be passed around safely.
+
+* Basic Context Example
+
+.code context-done.go /START FUNC OMIT/,/END FUNC OMIT/
+
+* Basic Context Example (Continued)
+
+.play context-done.go /START MAIN OMIT/,/END MAIN OMIT/
