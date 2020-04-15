@@ -3,7 +3,7 @@ Understanding Go's Context
 
 Ajitem Sahasrabuddhe
 Principal Software Engineer, Engineering.com
-me@ajitem.com
+ajitem@engineering.com
 @Greatdharmatma
 
 *  What is a Context?
@@ -86,5 +86,21 @@ This allows us to safely pass scoped data like security credentials to be passed
 .code context-done.go /START FUNC OMIT/,/END FUNC OMIT/
 
 * Basic Context Example (Continued)
+
+.play context-done.go /START MAIN OMIT/,/END MAIN OMIT/
+
+* Timeout Context Example
+
+.code context-timeout.go /START FUNC OMIT/,/END FUNC OMIT/
+
+* Timeout Context Example (Continued)
+
+.play context-timeout.go /START MAIN OMIT/,/END MAIN OMIT/
+
+* Deadline Context Example
+
+.code context-done.go /START FUNC OMIT/,/END FUNC OMIT/
+
+* Deadline Context Example (Continued)
 
 .play context-done.go /START MAIN OMIT/,/END MAIN OMIT/

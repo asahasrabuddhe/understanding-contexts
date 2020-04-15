@@ -9,13 +9,10 @@ import (
 
 func main() {
 	ctx, cancel := context.WithCancel(context.Background())
-	go func() {
-		time.Sleep(1 * time.Second)
+	time.AfterFunc(100*time.Microsecond, func() {
 		cancel()
-	}()
-	if deadline, ok := ctx.Deadline(); ok {
-		fmt.Println("program will terminate at", deadline)
-	}
+	})
+
 	countedUntil := DoTask(ctx)
 	fmt.Println("counted until", countedUntil)
 }
@@ -24,18 +21,21 @@ func main() {
 // START FUNC OMIT
 func DoTask(ctx context.Context) int {
 	var num int
+	var finished bool
 
 	fmt.Println("working...")
 
-	for {
+	for !finished {
 		select {
 		case <-ctx.Done():
 			fmt.Println(ctx.Err())
-			return num
+			finished = true
 		default:
 			num++
 		}
 	}
+
+	return num
 }
 
 // END FUNC OMIT
